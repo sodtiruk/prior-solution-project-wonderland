@@ -2,9 +2,10 @@ package th.co.priorsolution.project.wonderworld.controller;
 
 
 import org.springframework.web.bind.annotation.*;
+import th.co.priorsolution.project.wonderworld.model.InventoryModel;
 import th.co.priorsolution.project.wonderworld.model.ItemModel;
 import th.co.priorsolution.project.wonderworld.model.ResponseModel;
-import th.co.priorsolution.project.wonderworld.service.ItemService;
+import th.co.priorsolution.project.wonderworld.service.InventoryService;
 
 import java.util.List;
 
@@ -12,25 +13,20 @@ import java.util.List;
 @RequestMapping("api")
 public class InventoryRestController {
 
-    private ItemService itemService;
+    private InventoryService inventoryService;
 
-    public ItemRestController(ItemService itemService) {
-        this.itemService = itemService;
+    public InventoryRestController(InventoryService inventoryService) {
+        this.inventoryService = inventoryService;
     }
 
-    @GetMapping("/find/all/items")
-    public ResponseModel<List<ItemModel>> getAllMonsters(){
-        return this.itemService.getAllItemsByNativeSql();
+    @GetMapping("/find/all/inventory")
+    public ResponseModel<List<InventoryModel>> getAllMonsters(){
+        return this.inventoryService.getAllInventoryByNativeSql();
     }
 
-    @PostMapping("/create/items")
-    public ResponseModel<Integer> createMonsters(@RequestBody List<ItemModel> itemModels){
-        return this.itemService.createItemsByNativeSql(itemModels);
+    @PostMapping("/create/inventory")
+    public ResponseModel<Integer> createMonsters(@RequestBody List<InventoryModel> inventoryModels){
+        return this.inventoryService.createInventoryByNativeSql(inventoryModels);
     }
-
-
-
-
-
 
 }
