@@ -16,7 +16,7 @@ public class MarketService {
         this.marketNativeRepository = marketNativeRepository;
     }
 
-    public ResponseModel<List<MarketModel>> getAllItemsByNativeSql() {
+    public ResponseModel<List<MarketModel>> getAllMarketsByNativeSql() {
         ResponseModel<List<MarketModel>> result = new ResponseModel<>();
 
         result.setStatusCode(200);

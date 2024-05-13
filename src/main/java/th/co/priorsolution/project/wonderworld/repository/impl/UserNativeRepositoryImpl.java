@@ -3,14 +3,13 @@ package th.co.priorsolution.project.wonderworld.repository.impl;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import th.co.priorsolution.project.wonderworld.model.MonsterModel;
 import th.co.priorsolution.project.wonderworld.model.UserModel;
 import th.co.priorsolution.project.wonderworld.repository.UserNativeRepository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 
 @Repository
 public class UserNativeRepositoryImpl implements UserNativeRepository {
@@ -64,4 +63,65 @@ public class UserNativeRepositoryImpl implements UserNativeRepository {
         int insertedRow = this.jdbcTemplate.update(sql, paramList.toArray());
         return insertedRow;
     }
+
+    @Override
+    public MonsterModel attackMonster(Map<String, Object> data) {
+        List<Object> paramList = new ArrayList<>();
+
+        String sqlGetDamageAttackUser = "select user_atk from users where user_id = ?";
+        String sqlGetHealthMonster = "select monster_health_point from monsters where monster_id = ?";
+
+        String sqlUpdateThenAttacked = " update monsters set monster_health_point = ? where monster_id = ?";
+
+        Object userId = data.get("userId");
+        Object monsterId = data.get("monsterId");
+        //get damage attack user
+        Object damageAtk = this.jdbcTemplate.queryForObject(sqlGetDamageAttackUser, new Object[]{userId}, Integer.class);
+        //get monsterHealth
+        Object monsterHealth = this.jdbcTemplate.queryForObject(sqlGetHealthMonster, new Object[]{monsterId}, Integer.class);
+
+        Object monsterWasAttackedByDamage = ((int)monsterHealth - (int)damageAtk);
+        paramList.add(monsterWasAttackedByDamage);
+        paramList.add(monsterId);
+
+        this.jdbcTemplate.update(sqlUpdateThenAttacked, paramList.toArray());
+
+        MonsterModel monsterWasAttack = findMonsterById((int)monsterId);
+
+        if ((int)monsterWasAttackedByDamage <= 0){
+            //remove monster
+            String deleteMonsterWhichDiedSql = " delete from monsters where monster_id = ? ";
+            this.jdbcTemplate.update(deleteMonsterWhichDiedSql, (int)monsterId);
+
+            // and then add item in inventory user
+            List<Object> paramListForInventory = new ArrayList<>();
+
+            String addItemToInventoryUserSql = " insert into inventory (inv_id, inv_user_id, inv_item_id) values ";
+            addItemToInventoryUserSql +=       " ( (select ifnull(max(inv_id)+1, 1) from inventory inv), ?, ? ) ";
+
+            Object getItemMonsterDropId = monsterWasAttack.getMonsterItemDropId();
+            paramListForInventory.add(userId);
+            paramListForInventory.add(getItemMonsterDropId);
+
+            this.jdbcTemplate.update(addItemToInventoryUserSql, paramListForInventory.toArray());
+
+        }
+        return monsterWasAttack;
+    }
+
+    public MonsterModel findMonsterById(int monsterId) {
+        String sql = "SELECT monster_id, monster_name, monster_health_point, monster_item_drop_id FROM monsters WHERE monster_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{monsterId}, (rs, rowNum) -> {
+
+            MonsterModel monster = new MonsterModel();
+            monster.setMonsterId(rs.getInt("monster_id"));
+            monster.setMonsterName(rs.getString("monster_name"));
+            monster.setMonsterHealthPoint(rs.getInt("monster_health_point"));
+            monster.setMonsterItemDropId(rs.getInt("monster_item_drop_id"));
+
+            return monster;
+        });
+    }
+
+
 }

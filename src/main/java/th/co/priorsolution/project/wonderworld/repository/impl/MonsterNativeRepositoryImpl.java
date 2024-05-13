@@ -50,7 +50,7 @@ public class MonsterNativeRepositoryImpl implements MonsterNativeRepository {
 
         StringJoiner stringJoiner = new StringJoiner(",");
         for (MonsterModel m: monsterModels) {
-            String value = "((select max(monster_id)+1 from users u), ?, ?, ?)";
+            String value = "((select max(monster_id)+1 from monsters m), ?, ?, ?)";
 
             paramList.add(m.getMonsterName());
             paramList.add(m.getMonsterHealthPoint());

@@ -2,6 +2,7 @@ package th.co.priorsolution.project.wonderworld.repository.impl;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 import th.co.priorsolution.project.wonderworld.model.MarketModel;
 import th.co.priorsolution.project.wonderworld.repository.MarketNativeRepository;
 
@@ -9,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+@Repository
 public class MarketNativeRepositoryImpl implements MarketNativeRepository {
 
     private JdbcTemplate jdbcTemplate;
