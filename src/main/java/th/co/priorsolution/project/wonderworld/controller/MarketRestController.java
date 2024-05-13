@@ -2,6 +2,7 @@ package th.co.priorsolution.project.wonderworld.controller;
 
 
 import org.springframework.web.bind.annotation.*;
+import th.co.priorsolution.project.wonderworld.model.MarketItemUserModel;
 import th.co.priorsolution.project.wonderworld.model.MarketModel;
 import th.co.priorsolution.project.wonderworld.model.ResponseModel;
 import th.co.priorsolution.project.wonderworld.service.MarketService;
@@ -19,7 +20,7 @@ public class MarketRestController {
     }
 
     @GetMapping("/find/all/market")
-    public ResponseModel<List<MarketModel>> getAllMonsters(){
+    public ResponseModel<List<MarketItemUserModel>> getAllMonsters(){
         return this.marketService.getAllMarketsByNativeSql();
     }
 

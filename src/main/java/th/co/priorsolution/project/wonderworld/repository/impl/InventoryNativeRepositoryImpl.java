@@ -3,15 +3,14 @@ package th.co.priorsolution.project.wonderworld.repository.impl;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import th.co.priorsolution.project.wonderworld.model.InventoryItemEachUserModel;
 import th.co.priorsolution.project.wonderworld.model.InventoryModel;
-import th.co.priorsolution.project.wonderworld.model.ItemModel;
 import th.co.priorsolution.project.wonderworld.repository.InventoryNativeRepository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
 
 @Repository
 public class InventoryNativeRepositoryImpl implements InventoryNativeRepository {
@@ -24,7 +23,7 @@ public class InventoryNativeRepositoryImpl implements InventoryNativeRepository 
 
     @Override
     public List<InventoryModel> findAllInventory() {
-        String sql = " select inv_id, inv_user_id, inv_item_id from items";
+        String sql = " select inv_id, inv_user_id, inv_item_id from inventory ";
 
         List<InventoryModel> result = this.jdbcTemplate.query(sql, new RowMapper<InventoryModel>() {
             @Override
@@ -39,27 +38,36 @@ public class InventoryNativeRepositoryImpl implements InventoryNativeRepository 
             }
         });
         return result;
-
     }
 
     @Override
-    public int insertManyInventory(List<InventoryModel> inventoryModels) {
+    public List<InventoryItemEachUserModel> findInventoryUserId(int userId) {
         List<Object> paramList = new ArrayList<>();
-        String sql = " insert into items (inv_id, inv_user_id, inv_item_id) values ";
+//        String sql = " select inv_id, inv_user_id, inv_item_id from inventory where inv_user_id = ? ";
+        String sql = " SELECT inv.inv_id, inv.inv_user_id, u.user_name, u.user_atk, u.user_balance, inv.inv_item_id, it.item_name ";
+                sql +=  " FROM inventory as inv left join items as it  on inv.inv_item_id = it.item_id ";
+                sql += " left join users as u on inv.inv_user_id = u.user_id where inv.inv_user_id = ?";
 
-        StringJoiner stringJoiner = new StringJoiner(",");
-        for (InventoryModel i: inventoryModels) {
-            String value = "( (select ifnull(max(item_id)+1, 1) from items i), ?, ?)";
+        paramList.add(userId);
 
-            paramList.add(i.getInvUserId());
-            paramList.add(i.getInvItemId());
+        List<InventoryItemEachUserModel> result = this.jdbcTemplate.query(sql, new RowMapper<InventoryItemEachUserModel>() {
+            @Override
+            public InventoryItemEachUserModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+                //model for left join
+                InventoryItemEachUserModel i = new InventoryItemEachUserModel();
+                int col = 1;
 
-            stringJoiner.add(value);
-        }
-        sql += stringJoiner.toString();
+                i.setInvId(rs.getInt(col++));
+                i.setInvUserId(rs.getInt(col++));
+                i.setUserName(rs.getString(col++));
+                i.setUserAtk(rs.getInt(col++));
+                i.setUserBalance(rs.getInt(col++));
+                i.setInvItemId(rs.getInt(col++));
+                i.setItemName(rs.getString(col++));
 
-        int insertedRow = this.jdbcTemplate.update(sql, paramList.toArray());
-        return insertedRow;
+                return i;
+            }
+        }, paramList.toArray());
+        return result;
     }
-
 }

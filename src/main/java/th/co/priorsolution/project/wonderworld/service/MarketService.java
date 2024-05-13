@@ -1,6 +1,7 @@
 package th.co.priorsolution.project.wonderworld.service;
 
 import org.springframework.stereotype.Service;
+import th.co.priorsolution.project.wonderworld.model.MarketItemUserModel;
 import th.co.priorsolution.project.wonderworld.model.MarketModel;
 import th.co.priorsolution.project.wonderworld.model.ResponseModel;
 import th.co.priorsolution.project.wonderworld.repository.MarketNativeRepository;
@@ -16,13 +17,13 @@ public class MarketService {
         this.marketNativeRepository = marketNativeRepository;
     }
 
-    public ResponseModel<List<MarketModel>> getAllMarketsByNativeSql() {
-        ResponseModel<List<MarketModel>> result = new ResponseModel<>();
+    public ResponseModel<List<MarketItemUserModel>> getAllMarketsByNativeSql() {
+        ResponseModel<List<MarketItemUserModel>> result = new ResponseModel<>();
 
         result.setStatusCode(200);
-        result.setDescription("received all items");
+        result.setDescription("search all item in market successfully");
         try {
-            List<MarketModel> transfromData = this.marketNativeRepository.findAllItems();
+            List<MarketItemUserModel> transfromData = this.marketNativeRepository.findAllItems();
             result.setData(transfromData);
 
         } catch (Exception e) {

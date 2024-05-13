@@ -1,6 +1,7 @@
 package th.co.priorsolution.project.wonderworld.service;
 
 import org.springframework.stereotype.Service;
+import th.co.priorsolution.project.wonderworld.model.InventoryItemEachUserModel;
 import th.co.priorsolution.project.wonderworld.model.InventoryModel;
 import th.co.priorsolution.project.wonderworld.model.ResponseModel;
 import th.co.priorsolution.project.wonderworld.repository.InventoryNativeRepository;
@@ -33,15 +34,15 @@ public class InventoryService {
         return result;
     }
 
-    public ResponseModel<Integer> createInventoryByNativeSql(List<InventoryModel> inventoryModels) {
-        ResponseModel<Integer> result = new ResponseModel<>();
+    public ResponseModel<List<InventoryItemEachUserModel>> findInventoryByIdNativeSql(int userId) {
+        ResponseModel<List<InventoryItemEachUserModel>> result = new ResponseModel<>();
 
         result.setStatusCode(200);
-        result.setDescription("create inventory successfully");
+        result.setDescription("find inventory user successfully");
         try {
 //            List<UserModel> transfromData = userNativeRepository.findAllUsers();
-            int insertedRow = this.inventoryNativeRepository.insertManyInventory(inventoryModels);
-            result.setData(insertedRow);
+            List<InventoryItemEachUserModel> inventoryUserId = this.inventoryNativeRepository.findInventoryUserId(userId);
+            result.setData(inventoryUserId);
 
         } catch (Exception e) {
             result.setStatusCode(500);

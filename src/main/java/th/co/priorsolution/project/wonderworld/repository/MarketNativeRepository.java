@@ -1,10 +1,10 @@
 package th.co.priorsolution.project.wonderworld.repository;
 
-import th.co.priorsolution.project.wonderworld.model.MarketModel;
+import th.co.priorsolution.project.wonderworld.model.MarketItemUserModel;
 import java.util.List;
 
 public interface MarketNativeRepository {
 
-    public List<MarketModel> findAllItems();
+    public List<MarketItemUserModel> findAllItems();
 
 }

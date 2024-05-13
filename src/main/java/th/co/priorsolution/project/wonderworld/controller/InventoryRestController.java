@@ -2,6 +2,7 @@ package th.co.priorsolution.project.wonderworld.controller;
 
 
 import org.springframework.web.bind.annotation.*;
+import th.co.priorsolution.project.wonderworld.model.InventoryItemEachUserModel;
 import th.co.priorsolution.project.wonderworld.model.InventoryModel;
 import th.co.priorsolution.project.wonderworld.model.ItemModel;
 import th.co.priorsolution.project.wonderworld.model.ResponseModel;
@@ -24,9 +25,9 @@ public class InventoryRestController {
         return this.inventoryService.getAllInventoryByNativeSql();
     }
 
-    @PostMapping("/create/inventory")
-    public ResponseModel<Integer> createMonsters(@RequestBody List<InventoryModel> inventoryModels){
-        return this.inventoryService.createInventoryByNativeSql(inventoryModels);
+    @GetMapping("/find/inventory/{userId}")
+    public ResponseModel<List<InventoryItemEachUserModel>> createMonsters(@PathVariable int userId){
+        return this.inventoryService.findInventoryByIdNativeSql(userId);
     }
 
 }
