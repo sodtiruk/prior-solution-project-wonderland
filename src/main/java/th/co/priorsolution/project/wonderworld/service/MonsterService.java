@@ -40,7 +40,7 @@ public class MonsterService {
         result.setStatusCode(200);
         result.setDescription("create monsters successfully");
         try {
-//            List<UserModel> transfromData = userNativeRepository.findAllUsers();
+
             int insertedRow = this.monsterNativeRepository.insertManyMonsters(monsterModels);
             result.setData(insertedRow);
 
@@ -49,6 +49,40 @@ public class MonsterService {
             result.setDescription(e.getMessage());
         }
 
+        return result;
+    }
+
+    public ResponseModel<Integer> updateMonster(MonsterModel monsterModel) {
+        ResponseModel<Integer> result = new ResponseModel<>();
+
+        try {
+
+            int rowUpdated = this.monsterNativeRepository.updateMonsterByNativeSql(monsterModel);
+            result.setData(rowUpdated);
+
+            result.setStatusCode(200);
+            result.setDescription("update successfully");
+
+        }catch (Exception e) {
+            result.setStatusCode(500);
+            result.setDescription(e.getMessage());
+        }
+        return result;
+    }
+
+    public ResponseModel<Void> deleteMonsterId(MonsterModel monsterModel) {
+        ResponseModel<Void> result = new ResponseModel<>();
+
+        try {
+            this.monsterNativeRepository.deleteUserIdByNativeSql(monsterModel);
+
+            result.setStatusCode(200);
+            result.setDescription("delete successfully");
+
+        }catch (Exception e) {
+            result.setStatusCode(500);
+            result.setDescription(e.getMessage());
+        }
         return result;
     }
 }

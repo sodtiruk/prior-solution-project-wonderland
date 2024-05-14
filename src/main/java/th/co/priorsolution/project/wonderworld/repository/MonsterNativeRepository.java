@@ -10,6 +10,7 @@ public interface MonsterNativeRepository {
 
      public int insertManyMonsters(List<MonsterModel> monsterModels);
 
+     public int updateMonsterByNativeSql(MonsterModel monsterModel);
 
-
+     public void deleteUserIdByNativeSql(MonsterModel monsterModel);
 }

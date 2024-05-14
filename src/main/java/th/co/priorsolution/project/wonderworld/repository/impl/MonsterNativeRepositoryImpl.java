@@ -1,5 +1,6 @@
 package th.co.priorsolution.project.wonderworld.repository.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -62,5 +63,45 @@ public class MonsterNativeRepositoryImpl implements MonsterNativeRepository {
 
         int insertedRow = this.jdbcTemplate.update(sql, paramList.toArray());
         return insertedRow;
+    }
+
+    @Override
+    public int updateMonsterByNativeSql(MonsterModel monsterModel) {
+        List<Object> paramList = new ArrayList<>();
+
+        StringJoiner columnSql = new StringJoiner(",");
+        String sql = " update monsters ";
+        sql +=       " set ";
+
+        if (StringUtils.isNotEmpty(monsterModel.getMonsterName()) && monsterModel.getMonsterName() != "0"){
+            columnSql.add(" monster_name = ? ");
+            paramList.add(monsterModel.getMonsterName());
+        }
+        if (StringUtils.isNotEmpty(String.valueOf(monsterModel.getMonsterHealthPoint())) && monsterModel.getMonsterHealthPoint() != 0){
+            columnSql.add(" monster_health_point = ? ");
+            paramList.add(monsterModel.getMonsterHealthPoint());
+        }
+        if (StringUtils.isNotEmpty(String.valueOf(monsterModel.getMonsterItemDropId())) && monsterModel.getMonsterItemDropId() != 0){
+            columnSql.add(" monster_item_drop_id = ? ");
+            paramList.add(monsterModel.getMonsterItemDropId());
+        }
+
+        sql += columnSql.toString();
+        sql += " where monster_id = ? ";
+        paramList.add(monsterModel.getMonsterId());
+
+        int numberColumnUpdated = this.jdbcTemplate.update(sql, paramList.toArray());
+        return numberColumnUpdated;
+    }
+
+    @Override
+    public void deleteUserIdByNativeSql(MonsterModel monsterModel) {
+        List<Object> paramList = new ArrayList<>();
+
+        String sql = " delete from monsters where monster_id = ? ";
+        if (StringUtils.isNotEmpty(String.valueOf(monsterModel.getMonsterId()))){
+            paramList.add(monsterModel.getMonsterId());
+            this.jdbcTemplate.update(sql, paramList.toArray());
+        }
     }
 }
