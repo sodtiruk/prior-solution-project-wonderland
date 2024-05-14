@@ -17,13 +17,13 @@ public class InventoryService {
         this.inventoryNativeRepository = inventoryNativeRepository;
     }
 
-    public ResponseModel<List<InventoryModel>> getAllInventoryByNativeSql() {
-        ResponseModel<List<InventoryModel>> result = new ResponseModel<>();
+    public ResponseModel<List<InventoryItemEachUserModel>> getAllInventoryByNativeSql() {
+        ResponseModel<List<InventoryItemEachUserModel>> result = new ResponseModel<>();
 
         result.setStatusCode(200);
         result.setDescription("received all inventory");
         try {
-            List<InventoryModel> transfromData = this.inventoryNativeRepository.findAllInventory();
+            List<InventoryItemEachUserModel> transfromData = this.inventoryNativeRepository.findAllInventory();
             result.setData(transfromData);
 
         } catch (Exception e) {

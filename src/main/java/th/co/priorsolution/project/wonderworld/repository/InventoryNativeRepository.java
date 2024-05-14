@@ -9,7 +9,7 @@ import java.util.List;
 public interface InventoryNativeRepository {
 
 
-    public List<InventoryModel> findAllInventory();
+    public List<InventoryItemEachUserModel> findAllInventory();
 
     public List<InventoryItemEachUserModel> findInventoryUserId(int userId);
 

@@ -22,17 +22,25 @@ public class InventoryNativeRepositoryImpl implements InventoryNativeRepository 
     }
 
     @Override
-    public List<InventoryModel> findAllInventory() {
-        String sql = " select inv_id, inv_user_id, inv_item_id from inventory ";
+    public List<InventoryItemEachUserModel> findAllInventory() {
 
-        List<InventoryModel> result = this.jdbcTemplate.query(sql, new RowMapper<InventoryModel>() {
+        String sql = " SELECT inv.inv_id, inv.inv_user_id, u.user_name, u.user_atk, u.user_balance, inv.inv_item_id, it.item_name ";
+        sql +=  " FROM inventory as inv left join items as it  on inv.inv_item_id = it.item_id ";
+        sql += " left join users as u on inv.inv_user_id = u.user_id";
+
+        List<InventoryItemEachUserModel> result = this.jdbcTemplate.query(sql, new RowMapper<InventoryItemEachUserModel>() {
             @Override
-            public InventoryModel mapRow(ResultSet rs, int rowNum) throws SQLException {
-                InventoryModel i = new InventoryModel();
+            public InventoryItemEachUserModel mapRow(ResultSet rs, int rowNum) throws SQLException {
+                InventoryItemEachUserModel i = new InventoryItemEachUserModel();
                 int col = 1;
+
                 i.setInvId(rs.getInt(col++));
                 i.setInvUserId(rs.getInt(col++));
+                i.setUserName(rs.getString(col++));
+                i.setUserAtk(rs.getInt(col++));
+                i.setUserBalance(rs.getInt(col++));
                 i.setInvItemId(rs.getInt(col++));
+                i.setItemName(rs.getString(col++));
 
                 return i;
             }

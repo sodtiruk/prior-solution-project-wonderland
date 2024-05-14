@@ -21,7 +21,7 @@ public class InventoryRestController {
     }
 
     @GetMapping("/find/all/inventory")
-    public ResponseModel<List<InventoryModel>> getAllMonsters(){
+    public ResponseModel<List<InventoryItemEachUserModel>> getAllMonsters(){
         return this.inventoryService.getAllInventoryByNativeSql();
     }
 
