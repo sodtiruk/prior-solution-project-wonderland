@@ -1,5 +1,6 @@
 package th.co.priorsolution.project.wonderworld.repository.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -77,5 +78,16 @@ public class InventoryNativeRepositoryImpl implements InventoryNativeRepository 
             }
         }, paramList.toArray());
         return result;
+    }
+
+    @Override
+    public void deleteInventoryIdByNativeSql(InventoryModel inventoryModel) {
+        List<Object> paramList = new ArrayList<>();
+
+        String sql = " delete from inventory where inv_id = ? ";
+        if (StringUtils.isNotEmpty(String.valueOf(inventoryModel.getInvId()))){
+            paramList.add(inventoryModel.getInvId());
+            this.jdbcTemplate.update(sql, paramList.toArray());
+        }
     }
 }

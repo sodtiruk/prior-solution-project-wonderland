@@ -30,4 +30,10 @@ public class InventoryRestController {
         return this.inventoryService.findInventoryByIdNativeSql(userId);
     }
 
+    //delete
+    @DeleteMapping("delete/inventory")
+    public ResponseModel<Void> deleteItemById(@RequestBody InventoryModel inventoryModel){
+        return this.inventoryService.deleteInventoryId(inventoryModel);
+    }
+
 }

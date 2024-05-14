@@ -51,4 +51,20 @@ public class InventoryService {
 
         return result;
     }
+
+    public ResponseModel<Void> deleteInventoryId(InventoryModel inventoryModel) {
+        ResponseModel<Void> result = new ResponseModel<>();
+
+        try {
+            this.inventoryNativeRepository.deleteInventoryIdByNativeSql(inventoryModel);
+
+            result.setStatusCode(200);
+            result.setDescription("delete successfully");
+
+        }catch (Exception e) {
+            result.setStatusCode(500);
+            result.setDescription(e.getMessage());
+        }
+        return result;
+    }
 }

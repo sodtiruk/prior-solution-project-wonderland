@@ -13,4 +13,5 @@ public interface InventoryNativeRepository {
 
     public List<InventoryItemEachUserModel> findInventoryUserId(int userId);
 
+    public void deleteInventoryIdByNativeSql(InventoryModel inventoryModel);
 }
