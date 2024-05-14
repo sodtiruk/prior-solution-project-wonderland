@@ -9,4 +9,8 @@ public interface ItemNativeRepository {
     public List<ItemModel> findAllItems();
 
     public int insertManyItems(List<ItemModel> itemModels);
+
+    public int updateItemByNativeSql(ItemModel itemModel);
+
+    public void deleteItemIdByNativeSql(ItemModel itemModel);
 }

@@ -50,4 +50,35 @@ public class ItemService {
 
         return result;
     }
+
+    public ResponseModel<Integer> updateMonster(ItemModel itemModel) {
+        ResponseModel<Integer> result = new ResponseModel<>();
+        try {
+            int rowUpdated = this.itemNativeRepository.updateItemByNativeSql(itemModel);
+            result.setData(rowUpdated);
+
+            result.setStatusCode(200);
+            result.setDescription("update successfully");
+
+        }catch (Exception e) {
+            result.setStatusCode(500);
+            result.setDescription(e.getMessage());
+        }
+        return result;
+    }
+
+    public ResponseModel<Void> deleteMonsterId(ItemModel itemModel) {
+        ResponseModel<Void> result = new ResponseModel<>();
+        try {
+            this.itemNativeRepository.deleteItemIdByNativeSql(itemModel);
+
+            result.setStatusCode(200);
+            result.setDescription("delete successfully");
+
+        }catch (Exception e) {
+            result.setStatusCode(500);
+            result.setDescription(e.getMessage());
+        }
+        return result;
+    }
 }

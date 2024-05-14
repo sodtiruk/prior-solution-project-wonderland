@@ -1,5 +1,6 @@
 package th.co.priorsolution.project.wonderworld.repository.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -57,5 +58,37 @@ public class ItemNativeRepositoryImpl implements ItemNativeRepository {
 
         int insertedRow = this.jdbcTemplate.update(sql, paramList.toArray());
         return insertedRow;
+    }
+
+    @Override
+    public int updateItemByNativeSql(ItemModel itemModel) {
+        List<Object> paramList = new ArrayList<>();
+
+        StringJoiner columnSql = new StringJoiner(",");
+        String sql = " update items ";
+        sql +=       " set ";
+
+        if (StringUtils.isNotEmpty(itemModel.getItemName()) && itemModel.getItemName() != "0"){
+            columnSql.add(" item_name = ? ");
+            paramList.add(itemModel.getItemName());
+        }
+
+        sql += columnSql.toString();
+        sql += " where item_id = ? ";
+        paramList.add(itemModel.getItemId());
+
+        int numberColumnUpdated = this.jdbcTemplate.update(sql, paramList.toArray());
+        return numberColumnUpdated;
+    }
+
+    @Override
+    public void deleteItemIdByNativeSql(ItemModel itemModel) {
+        List<Object> paramList = new ArrayList<>();
+
+        String sql = " delete from items where item_id = ? ";
+        if (StringUtils.isNotEmpty(String.valueOf(itemModel.getItemId()))){
+            paramList.add(itemModel.getItemId());
+            this.jdbcTemplate.update(sql, paramList.toArray());
+        }
     }
 }
