@@ -1,6 +1,7 @@
 package th.co.priorsolution.project.wonderworld.controller;
 
 import jakarta.websocket.server.PathParam;
+import org.apache.catalina.User;
 import org.springframework.web.bind.annotation.*;
 import th.co.priorsolution.project.wonderworld.model.MonsterModel;
 import th.co.priorsolution.project.wonderworld.model.ResponseModel;
@@ -30,18 +31,23 @@ public class UserRestController {
         return this.userService.createUserByNativeSql(userModels);
     }
 
-//    @GetMapping("find/user/{userId}")
-//    public ResponseModel<List<UserModel>> getUserById(@PathVariable("userId") int userId){
-//        return this.userService.getUserIdByNativeSql(userId);
-//    }
-
     //attack monster
     @PostMapping("attack/monster")
     public ResponseModel<MonsterModel> attackMonsterById(@RequestBody Map<String, Object> data){
         return this.userService.userAttackMonsterById(data);
     }
 
+    //update
+    @PutMapping("update/user")
+    public ResponseModel<Integer> updateUser(@RequestBody UserModel userModel){
+        return this.userService.updateUser(userModel);
+    }
 
+    //delete
+    @DeleteMapping("delete/user")
+    public ResponseModel<Void> deleteUserById(@RequestBody UserModel userModel){
+        return this.userService.deleteUserId(userModel);
+    }
 
 
 

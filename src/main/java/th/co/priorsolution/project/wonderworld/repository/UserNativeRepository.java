@@ -16,4 +16,7 @@ public interface UserNativeRepository {
 
     public MonsterModel attackMonster(Map<String, Object> data);
 
+    public int updateUserByNativeSql(UserModel userModel);
+
+    public void deleteUserIdByNativeSql(UserModel userModel);
 }

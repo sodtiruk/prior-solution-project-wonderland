@@ -122,7 +122,6 @@ public class MarketNativeRepositoryImpl implements MarketNativeRepository {
             paramForUpdateMarketItem.add(itemMarketId);
             this.jdbcTemplate.update(updateMarketItemSql, paramForUpdateMarketItem.toArray());
 
-
             // update change inventory
             String updateInventoryUserSql = " update inventory set inv_user_id = ? where inv_id = ? ";
             List<Object> paramForUpdateInventory = new ArrayList<>();

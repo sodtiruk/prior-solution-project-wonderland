@@ -7,6 +7,7 @@ import th.co.priorsolution.project.wonderworld.model.ResponseModel;
 import th.co.priorsolution.project.wonderworld.model.UserModel;
 import th.co.priorsolution.project.wonderworld.repository.UserNativeRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +66,6 @@ public class UserService {
     public ResponseModel<MonsterModel> userAttackMonsterById(@RequestBody Map<String, Object> data){
 
         ResponseModel<MonsterModel> result = new ResponseModel<MonsterModel>();
-
         try {
 //            List<UserModel> transfromData = userNativeRepository.findAllUsers();
             MonsterModel monsterWasAttacked = this.userNativeRepository.attackMonster(data);
@@ -83,4 +83,39 @@ public class UserService {
 
     }
 
+    public ResponseModel<Integer> updateUser(UserModel userModel) {
+        ResponseModel<Integer> result = new ResponseModel<>();
+
+        try {
+//            List<UserModel> transfromData = userNativeRepository.findAllUsers();
+            int rowUpdated = this.userNativeRepository.updateUserByNativeSql(userModel);
+            result.setData(rowUpdated);
+
+            result.setStatusCode(200);
+            result.setDescription("update successfully");
+
+        }catch (Exception e) {
+            result.setStatusCode(500);
+            result.setDescription(e.getMessage());
+        }
+        return result;
+    }
+
+    public ResponseModel<Void> deleteUserId(UserModel userModel) {
+
+        ResponseModel<Void> result = new ResponseModel<>();
+
+        try {
+            this.userNativeRepository.deleteUserIdByNativeSql(userModel);
+
+            result.setStatusCode(200);
+            result.setDescription("delete successfully");
+
+        }catch (Exception e) {
+            result.setStatusCode(500);
+            result.setDescription(e.getMessage());
+        }
+        return result;
+
+    }
 }

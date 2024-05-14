@@ -1,5 +1,6 @@
 package th.co.priorsolution.project.wonderworld.repository.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -107,6 +108,45 @@ public class UserNativeRepositoryImpl implements UserNativeRepository {
 
         }
         return monsterWasAttack;
+    }
+
+    @Override
+    public int updateUserByNativeSql(UserModel userModel) {
+        List<Object> paramList = new ArrayList<>();
+
+        StringJoiner columnSql = new StringJoiner(",");
+        String sql = " update users ";
+        sql +=       " set ";
+
+        if (StringUtils.isNotEmpty(userModel.getUserName()) && userModel.getUserName() != "0"){
+            columnSql.add(" user_name = ? ");
+            paramList.add(userModel.getUserName());
+        }
+        if (StringUtils.isNotEmpty(String.valueOf(userModel.getUserAtk())) && userModel.getUserAtk() != 0){
+            columnSql.add(" user_atk = ? ");
+            paramList.add(userModel.getUserAtk());
+        }
+        if (StringUtils.isNotEmpty(String.valueOf(userModel.getUserBalance())) && userModel.getUserBalance() != 0){
+            columnSql.add(" user_balance = ? ");
+            paramList.add(userModel.getUserBalance());
+        }
+        sql += columnSql.toString();
+        sql += " where user_id = ? ";
+        paramList.add(userModel.getUserId());
+
+        int numberColumnUpdated = this.jdbcTemplate.update(sql, paramList.toArray());
+        return numberColumnUpdated;
+    }
+
+    @Override
+    public void deleteUserIdByNativeSql(UserModel userModel) {
+        List<Object> paramList = new ArrayList<>();
+
+        String sql = " delete from users where user_id = ? ";
+        if (StringUtils.isNotEmpty(String.valueOf(userModel.getUserId()))){
+            paramList.add(userModel.getUserId());
+            this.jdbcTemplate.update(sql, paramList.toArray());
+        }
     }
 
     public MonsterModel findMonsterById(int monsterId) {
