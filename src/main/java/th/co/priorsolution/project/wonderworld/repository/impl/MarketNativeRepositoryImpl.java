@@ -3,13 +3,15 @@ package th.co.priorsolution.project.wonderworld.repository.impl;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import th.co.priorsolution.project.wonderworld.model.InventoryItemEachUserModel;
 import th.co.priorsolution.project.wonderworld.model.MarketItemUserModel;
-import th.co.priorsolution.project.wonderworld.model.MarketModel;
 import th.co.priorsolution.project.wonderworld.repository.MarketNativeRepository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class MarketNativeRepositoryImpl implements MarketNativeRepository {
@@ -48,5 +50,63 @@ public class MarketNativeRepositoryImpl implements MarketNativeRepository {
         });
         return result;
 
+    }
+
+    @Override
+    public MarketItemUserModel sellItemUser(Map<String, Object> data) {
+        List<Object> paramListForInsert = new ArrayList<>();
+
+        Object marketIdSell = data.get("marketInvId");
+        Object itemPrice = data.get("itemPrice");
+        Object marketStatus = "selling";
+
+        String selledItemOnMarketSql = " insert into market (market_inv_id, item_price, market_inv_id_status) values (?, ?, ?) ";
+
+        String getItemOnMarketSql = " select m.market_inv_id, inv.inv_user_id, inv.inv_item_id, it.item_name, m.item_price, m.market_inv_id_status ";
+        getItemOnMarketSql += " from market as m left join ";
+        getItemOnMarketSql += " inventory as inv on m.market_inv_id = inv.inv_id left join ";
+        getItemOnMarketSql += "  items as it on inv.inv_item_id = it.item_id where market_inv_id = ? ";
+
+
+        paramListForInsert.add(marketIdSell);
+        paramListForInsert.add(itemPrice);
+        paramListForInsert.add(marketStatus);
+
+        this.jdbcTemplate.update(selledItemOnMarketSql, paramListForInsert.toArray());
+
+        MarketItemUserModel marketItemUserModel = this.jdbcTemplate.queryForObject(getItemOnMarketSql,
+                new Object[]{(int)marketIdSell}, (rs, rowNum) -> {
+
+            MarketItemUserModel m = new MarketItemUserModel();
+
+            m.setMarketInvId(rs.getInt("market_inv_id"));
+            m.setInvUserId(rs.getInt("inv_user_id"));
+            m.setInvItemId(rs.getInt("inv_item_id"));
+            m.setItemName(rs.getString("item_name"));
+            m.setItemPrice(rs.getInt("item_price"));
+            m.setMarketInvIdStatus(rs.getString("market_inv_id_status"));
+
+            return m;
+        });
+
+        return marketItemUserModel;
+    }
+
+    @Override
+    public List<InventoryItemEachUserModel> buyItemInMarket(Map<String, Object> data) {
+
+        Object userBuyerId = data.get("user_id");
+        Object itemMarket = data.get("market_inv_id");
+
+
+        //check if user have money enough
+        String userBalanceSql = " select user_balance from users where user_id = ?";
+
+
+
+        // update
+
+
+        return List.of();
     }
 }
