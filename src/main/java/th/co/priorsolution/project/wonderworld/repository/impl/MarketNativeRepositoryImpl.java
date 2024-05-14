@@ -49,7 +49,6 @@ public class MarketNativeRepositoryImpl implements MarketNativeRepository {
             }
         });
         return result;
-
     }
 
     @Override
@@ -66,7 +65,6 @@ public class MarketNativeRepositoryImpl implements MarketNativeRepository {
         getItemOnMarketSql += " from market as m left join ";
         getItemOnMarketSql += " inventory as inv on m.market_inv_id = inv.inv_id left join ";
         getItemOnMarketSql += "  items as it on inv.inv_item_id = it.item_id where market_inv_id = ? ";
-
 
         paramListForInsert.add(marketIdSell);
         paramListForInsert.add(itemPrice);
@@ -93,20 +91,50 @@ public class MarketNativeRepositoryImpl implements MarketNativeRepository {
     }
 
     @Override
-    public List<InventoryItemEachUserModel> buyItemInMarket(Map<String, Object> data) {
-
-        Object userBuyerId = data.get("user_id");
-        Object itemMarket = data.get("market_inv_id");
-
+    public String buyItemInMarket(Map<String, Object> data) {
+        Object userBuyerId = data.get("userId");
+        Object itemMarketId = data.get("marketInvId");
 
         //check if user have money enough
-        String userBalanceSql = " select user_balance from users where user_id = ?";
+        String userBalanceSql = " select user_balance from users where user_id = ? ";
+        String itemPriceSql = " select item_price from market where market_inv_id = ? ";
+
+        Object userBalance =  this.jdbcTemplate.queryForObject(userBalanceSql, new Object[]{userBuyerId}, Integer.class);
+        Object itemPrice =  this.jdbcTemplate.queryForObject(itemPriceSql, new Object[]{itemMarketId}, Integer.class);
+
+        if ((int)userBalance >= (int)itemPrice) {
+            // you can buy
+            // update balance user
+            List<Object> paramForUpdateBalance = new ArrayList<>();
+            Object balanceLeft = (int)userBalance - (int)itemPrice;
+
+            paramForUpdateBalance.add(balanceLeft);
+            paramForUpdateBalance.add(userBuyerId);
+
+            String updateBalanceUserSql = " update users set user_balance = ? where user_id = ? ";
+            this.jdbcTemplate.update(updateBalanceUserSql, paramForUpdateBalance.toArray());
+
+            // update market
+            Object marketInvIdStatus = "selled";
+            String updateMarketItemSql = " update market set market_inv_id_status = ? where market_inv_id = ? ";
+            List<Object> paramForUpdateMarketItem = new ArrayList<>();
+            paramForUpdateMarketItem.add(marketInvIdStatus);
+            paramForUpdateMarketItem.add(itemMarketId);
+            this.jdbcTemplate.update(updateMarketItemSql, paramForUpdateMarketItem.toArray());
 
 
+            // update change inventory
+            String updateInventoryUserSql = " update inventory set inv_user_id = ? where inv_id = ? ";
+            List<Object> paramForUpdateInventory = new ArrayList<>();
+            paramForUpdateInventory.add(userBuyerId);
+            paramForUpdateInventory.add(itemMarketId);
+            this.jdbcTemplate.update(updateInventoryUserSql, paramForUpdateInventory.toArray());
 
-        // update
-
-
-        return List.of();
+            // return query data inventory
+            return "You buy item successfully";
+        }else {
+            // you can't buy
+            return "You can't buy item but money not enough";
+        }
     }
 }

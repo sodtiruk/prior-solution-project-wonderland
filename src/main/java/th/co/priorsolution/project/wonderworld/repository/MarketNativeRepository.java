@@ -11,5 +11,5 @@ public interface MarketNativeRepository {
 
     public MarketItemUserModel sellItemUser(Map<String, Object> data);
 
-    public List<InventoryItemEachUserModel> buyItemInMarket(Map<String, Object> data);
+    public String buyItemInMarket(Map<String, Object> data);
 }

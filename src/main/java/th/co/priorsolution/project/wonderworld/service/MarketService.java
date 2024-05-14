@@ -55,13 +55,13 @@ public class MarketService {
 
     }
 
-    public ResponseModel<List<InventoryItemEachUserModel>> buyItemByNativeSql(Map<String, Object> data) {
-        ResponseModel<List<InventoryItemEachUserModel>> result = new ResponseModel<>();
+    public ResponseModel<String> buyItemByNativeSql(Map<String, Object> data) {
+        ResponseModel<String> result = new ResponseModel<>();
 
         result.setStatusCode(200);
-        result.setDescription("buy item successfully");
+        result.setDescription("query successfully");
         try {
-            List<InventoryItemEachUserModel> transfromData = this.marketNativeRepository.buyItemInMarket(data);
+            String transfromData = this.marketNativeRepository.buyItemInMarket(data);
             result.setData(transfromData);
 
         } catch (Exception e) {

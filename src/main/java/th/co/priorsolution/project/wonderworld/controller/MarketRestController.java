@@ -34,7 +34,7 @@ public class MarketRestController {
 
     //buy item
     @PostMapping("/buy/item")
-    public ResponseModel<List<InventoryItemEachUserModel>> buyItemInMarket(@RequestBody Map<String, Object> data){
+    public ResponseModel<String> buyItemInMarket(@RequestBody Map<String, Object> data){
         return this.marketService.buyItemByNativeSql(data);
     }
 
