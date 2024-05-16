@@ -71,7 +71,6 @@ public class UserNativeRepositoryImpl implements UserNativeRepository {
 
         String sqlGetDamageAttackUser = "select user_atk from users where user_id = ?";
         String sqlGetHealthMonster = "select monster_health_point from monsters where monster_id = ?";
-
         String sqlUpdateThenAttacked = " update monsters set monster_health_point = ? where monster_id = ?";
 
         Object userId = data.get("userId");
