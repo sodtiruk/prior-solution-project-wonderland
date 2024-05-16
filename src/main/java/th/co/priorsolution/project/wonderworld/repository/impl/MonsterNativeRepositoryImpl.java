@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import th.co.priorsolution.project.wonderworld.model.MonsterModel;
-import th.co.priorsolution.project.wonderworld.model.UserModel;
 import th.co.priorsolution.project.wonderworld.repository.MonsterNativeRepository;
 
 import java.sql.ResultSet;
