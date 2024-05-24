@@ -3,7 +3,6 @@ package th.co.priorsolution.project.wonderworld.repository.impl;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import th.co.priorsolution.project.wonderworld.model.InventoryItemEachUserModel;
 import th.co.priorsolution.project.wonderworld.model.MarketItemUserModel;
 import th.co.priorsolution.project.wonderworld.repository.MarketNativeRepository;
 
