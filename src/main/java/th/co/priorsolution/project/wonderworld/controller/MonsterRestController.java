@@ -3,7 +3,6 @@ package th.co.priorsolution.project.wonderworld.controller;
 import org.springframework.web.bind.annotation.*;
 import th.co.priorsolution.project.wonderworld.model.MonsterModel;
 import th.co.priorsolution.project.wonderworld.model.ResponseModel;
-import th.co.priorsolution.project.wonderworld.model.UserModel;
 import th.co.priorsolution.project.wonderworld.service.MonsterService;
 
 import java.util.List;
