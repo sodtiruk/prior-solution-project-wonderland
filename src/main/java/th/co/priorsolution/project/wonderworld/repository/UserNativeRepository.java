@@ -14,9 +14,21 @@ public interface UserNativeRepository {
 
     public int insertManyUser(List<UserModel> userModels);
 
-    public MonsterModel attackMonster(Map<String, Object> data);
-
     public int updateUserByNativeSql(UserModel userModel);
 
     public void deleteUserIdByNativeSql(UserModel userModel);
+
+    public Object getDamageUserByNativeSql(Map<String, Object> data);
+
+    public Object getHealthMonsterByNativeSql(Map<String, Object> data);
+
+    public void updateHealthMonster(Object mosnterObject, Map<String, Object> data);
+
+    public void deleteMonsterById(Map<String, Object> data);
+
+    public MonsterModel findMonsterById(int monsterId);
+
+    public void addInventoryUser(Object userId, Object itemId);
+
+
 }

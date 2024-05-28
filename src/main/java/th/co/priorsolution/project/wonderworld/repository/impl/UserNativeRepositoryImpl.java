@@ -65,49 +65,49 @@ public class UserNativeRepositoryImpl implements UserNativeRepository {
         return insertedRow;
     }
 
-    @Override
-    public MonsterModel attackMonster(Map<String, Object> data) {
-        List<Object> paramList = new ArrayList<>();
 
-        String sqlGetDamageAttackUser = "select user_atk from users where user_id = ?";
-        String sqlGetHealthMonster = "select monster_health_point from monsters where monster_id = ?";
-        String sqlUpdateThenAttacked = " update monsters set monster_health_point = ? where monster_id = ?";
-
+    public Object getDamageUserByNativeSql(Map<String, Object> data) {
         Object userId = data.get("userId");
-        Object monsterId = data.get("monsterId");
-        //get damage attack user
+        String sqlGetDamageAttackUser = "select user_atk from users where user_id = ?";
         Object damageAtk = this.jdbcTemplate.queryForObject(sqlGetDamageAttackUser, new Object[]{userId}, Integer.class);
-        //get monsterHealth
-        Object monsterHealth = this.jdbcTemplate.queryForObject(sqlGetHealthMonster, new Object[]{monsterId}, Integer.class);
-
-        Object monsterWasAttackedByDamage = ((int)monsterHealth - (int)damageAtk);
-        paramList.add(monsterWasAttackedByDamage);
-        paramList.add(monsterId);
-
-        this.jdbcTemplate.update(sqlUpdateThenAttacked, paramList.toArray());
-
-        MonsterModel monsterWasAttack = findMonsterById((int)monsterId);
-
-        if ((int)monsterWasAttackedByDamage <= 0){
-            //remove monster
-            String deleteMonsterWhichDiedSql = " delete from monsters where monster_id = ? ";
-            this.jdbcTemplate.update(deleteMonsterWhichDiedSql, (int)monsterId);
-
-            // and then add item in inventory user
-            List<Object> paramListForInventory = new ArrayList<>();
-
-            String addItemToInventoryUserSql = " insert into inventory (inv_id, inv_user_id, inv_item_id) values ";
-            addItemToInventoryUserSql +=       " ( (select ifnull(max(inv_id)+1, 1) from inventory inv), ?, ? ) ";
-
-            Object getItemMonsterDropId = monsterWasAttack.getMonsterItemDropId();
-            paramListForInventory.add(userId);
-            paramListForInventory.add(getItemMonsterDropId);
-
-            this.jdbcTemplate.update(addItemToInventoryUserSql, paramListForInventory.toArray());
-
-        }
-        return monsterWasAttack;
+        return damageAtk;
     }
+
+    public Object getHealthMonsterByNativeSql(Map<String, Object> data){
+        Object monsterId = data.get("monsterId");
+        String sqlGetHealthMonster = "select monster_health_point from monsters where monster_id = ?";
+        Object monsterHealth = this.jdbcTemplate.queryForObject(sqlGetHealthMonster, new Object[]{monsterId}, Integer.class);
+        return monsterHealth;
+    }
+
+    public void updateHealthMonster(Object monsterWasAttackByDamage, Map<String, Object> data) {
+        List<Object> paramList = new ArrayList<>();
+        String sqlUpdateThenAttacked = " update monsters set monster_health_point = ? where monster_id = ?";
+        Object userId = data.get("userId");
+        paramList.add(monsterWasAttackByDamage);
+        paramList.add(userId);
+        this.jdbcTemplate.update(sqlUpdateThenAttacked, paramList.toArray());
+    }
+
+    @Override
+    public void deleteMonsterById(Map<String, Object> data) {
+        Object monsterId = data.get("monsterId");
+        String deleteMonsterWhichDiedSql = " delete from monsters where monster_id = ? ";
+        this.jdbcTemplate.update(deleteMonsterWhichDiedSql, (int)monsterId);
+    }
+
+    @Override
+    public void addInventoryUser(Object userId, Object itemId){
+        List<Object> paramListForInventory = new ArrayList<>();
+        String addItemToInventoryUserSql = " insert into inventory (inv_id, inv_user_id, inv_item_id) values ";
+        addItemToInventoryUserSql +=       " ( (select ifnull(max(inv_id)+1, 1) from inventory inv), ?, ? ) ";
+
+        paramListForInventory.add(userId);
+        paramListForInventory.add(itemId);
+        this.jdbcTemplate.update(addItemToInventoryUserSql, paramListForInventory.toArray());
+    }
+
+
 
     @Override
     public int updateUserByNativeSql(UserModel userModel) {
@@ -148,6 +148,7 @@ public class UserNativeRepositoryImpl implements UserNativeRepository {
         }
     }
 
+    @Override
     public MonsterModel findMonsterById(int monsterId) {
         String sql = "SELECT monster_id, monster_name, monster_health_point, monster_item_drop_id FROM monsters WHERE monster_id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{monsterId}, (rs, rowNum) -> {

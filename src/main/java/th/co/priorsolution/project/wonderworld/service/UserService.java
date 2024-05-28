@@ -68,9 +68,29 @@ public class UserService {
         ResponseModel<MonsterModel> result = new ResponseModel<MonsterModel>();
         try {
 //            List<UserModel> transfromData = userNativeRepository.findAllUsers();
-            MonsterModel monsterWasAttacked = this.userNativeRepository.attackMonster(data);
-            result.setData(monsterWasAttacked);
 
+            Object damageUser = userNativeRepository.getDamageUserByNativeSql(data);
+            Object healthMonster = userNativeRepository.getHealthMonsterByNativeSql(data);
+
+            Object monsterWasAttackedByDamage = ((int)healthMonster - (int)damageUser);
+
+            userNativeRepository.updateHealthMonster(monsterWasAttackedByDamage, data);
+
+            Object monsterId = data.get("monsterId");
+            MonsterModel monsterWasAttack = userNativeRepository.findMonsterById((int)monsterId);
+
+            if ((int)monsterWasAttackedByDamage <= 0) {
+                //remove monster
+                userNativeRepository.deleteMonsterById(data);
+
+                // and then add item in inventory user
+                Object userId = data.get("userId");
+                Object itemId = monsterWasAttack.getMonsterItemDropId();
+
+                userNativeRepository.addInventoryUser(userId, itemId);
+            }
+
+            result.setData(monsterWasAttack);
             result.setStatusCode(200);
             result.setDescription("attack monster 1 hit");
 
