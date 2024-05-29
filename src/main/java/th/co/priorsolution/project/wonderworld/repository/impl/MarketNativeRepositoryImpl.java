@@ -51,7 +51,7 @@ public class MarketNativeRepositoryImpl implements MarketNativeRepository {
     }
 
     @Override
-    public MarketItemUserModel sellItemUser(Map<String, Object> data) {
+    public void createItemMarket(Map<String, Object> data) {
         List<Object> paramListForInsert = new ArrayList<>();
 
         Object marketIdSell = data.get("marketInvId");
@@ -60,16 +60,22 @@ public class MarketNativeRepositoryImpl implements MarketNativeRepository {
 
         String selledItemOnMarketSql = " insert into market (market_inv_id, item_price, market_inv_id_status) values (?, ?, ?) ";
 
-        String getItemOnMarketSql = " select m.market_inv_id, inv.inv_user_id, inv.inv_item_id, it.item_name, m.item_price, m.market_inv_id_status ";
-        getItemOnMarketSql += " from market as m left join ";
-        getItemOnMarketSql += " inventory as inv on m.market_inv_id = inv.inv_id left join ";
-        getItemOnMarketSql += "  items as it on inv.inv_item_id = it.item_id where market_inv_id = ? ";
-
         paramListForInsert.add(marketIdSell);
         paramListForInsert.add(itemPrice);
         paramListForInsert.add(marketStatus);
 
         this.jdbcTemplate.update(selledItemOnMarketSql, paramListForInsert.toArray());
+    }
+
+    @Override
+    public MarketItemUserModel getItemUserWasSelledInMarket(Map<String, Object> data) {
+
+        String getItemOnMarketSql = " select m.market_inv_id, inv.inv_user_id, inv.inv_item_id, it.item_name, m.item_price, m.market_inv_id_status ";
+        getItemOnMarketSql += " from market as m left join ";
+        getItemOnMarketSql += " inventory as inv on m.market_inv_id = inv.inv_id left join ";
+        getItemOnMarketSql += "  items as it on inv.inv_item_id = it.item_id where market_inv_id = ? ";
+
+        Object marketIdSell = data.get("marketInvId");
 
         MarketItemUserModel marketItemUserModel = this.jdbcTemplate.queryForObject(getItemOnMarketSql,
                 new Object[]{(int)marketIdSell}, (rs, rowNum) -> {
@@ -135,4 +141,6 @@ public class MarketNativeRepositoryImpl implements MarketNativeRepository {
             return "You can't buy item but money not enough";
         }
     }
+
+
 }

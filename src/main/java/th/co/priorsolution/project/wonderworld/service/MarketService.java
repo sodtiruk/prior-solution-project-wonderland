@@ -1,8 +1,6 @@
 package th.co.priorsolution.project.wonderworld.service;
 
 import org.springframework.stereotype.Service;
-import th.co.priorsolution.project.wonderworld.model.InventoryItemEachUserModel;
-import th.co.priorsolution.project.wonderworld.model.InventoryModel;
 import th.co.priorsolution.project.wonderworld.model.MarketItemUserModel;
 import th.co.priorsolution.project.wonderworld.model.ResponseModel;
 import th.co.priorsolution.project.wonderworld.repository.MarketNativeRepository;
@@ -37,13 +35,17 @@ public class MarketService {
     }
 
     public ResponseModel<MarketItemUserModel> sellItemUserByNativeSql(Map<String, Object> data) {
-
         ResponseModel<MarketItemUserModel> result = new ResponseModel<>();
 
         result.setStatusCode(200);
         result.setDescription("sell item successfully");
         try {
-            MarketItemUserModel transfromData = this.marketNativeRepository.sellItemUser(data);
+            //do something
+            //create item in market
+            this.marketNativeRepository.createItemMarket(data);
+
+            //get item
+            MarketItemUserModel transfromData = this.marketNativeRepository.getItemUserWasSelledInMarket(data);
             result.setData(transfromData);
 
         } catch (Exception e) {
