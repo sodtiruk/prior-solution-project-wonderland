@@ -74,7 +74,7 @@ public class UserService {
 
             Object monsterWasAttackedByDamage = ((int)healthMonster - (int)damageUser);
 
-            userNativeRepository.updateHealthMonster(monsterWasAttackedByDamage, data);
+            this.userNativeRepository.updateHealthMonster(monsterWasAttackedByDamage, data);
 
             Object monsterId = data.get("monsterId");
             MonsterModel monsterWasAttack = userNativeRepository.findMonsterById((int)monsterId);

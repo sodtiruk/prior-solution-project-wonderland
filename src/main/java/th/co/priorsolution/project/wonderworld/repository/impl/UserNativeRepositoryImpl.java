@@ -65,7 +65,7 @@ public class UserNativeRepositoryImpl implements UserNativeRepository {
         return insertedRow;
     }
 
-
+    @Override
     public Object getDamageUserByNativeSql(Map<String, Object> data) {
         Object userId = data.get("userId");
         String sqlGetDamageAttackUser = "select user_atk from users where user_id = ?";
@@ -73,6 +73,7 @@ public class UserNativeRepositoryImpl implements UserNativeRepository {
         return damageAtk;
     }
 
+    @Override
     public Object getHealthMonsterByNativeSql(Map<String, Object> data){
         Object monsterId = data.get("monsterId");
         String sqlGetHealthMonster = "select monster_health_point from monsters where monster_id = ?";
@@ -80,12 +81,13 @@ public class UserNativeRepositoryImpl implements UserNativeRepository {
         return monsterHealth;
     }
 
+    @Override
     public void updateHealthMonster(Object monsterWasAttackByDamage, Map<String, Object> data) {
         List<Object> paramList = new ArrayList<>();
         String sqlUpdateThenAttacked = " update monsters set monster_health_point = ? where monster_id = ?";
-        Object userId = data.get("userId");
+        Object monsterId = data.get("monsterId");
         paramList.add(monsterWasAttackByDamage);
-        paramList.add(userId);
+        paramList.add(monsterId);
         this.jdbcTemplate.update(sqlUpdateThenAttacked, paramList.toArray());
     }
 

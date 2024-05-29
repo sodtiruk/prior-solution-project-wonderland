@@ -3,7 +3,9 @@ package th.co.priorsolution.project.wonderworld.service;
 import org.springframework.stereotype.Service;
 import th.co.priorsolution.project.wonderworld.model.MarketItemUserModel;
 import th.co.priorsolution.project.wonderworld.model.ResponseModel;
+import th.co.priorsolution.project.wonderworld.model.UserModel;
 import th.co.priorsolution.project.wonderworld.repository.MarketNativeRepository;
+import th.co.priorsolution.project.wonderworld.repository.UserNativeRepository;
 
 import java.util.List;
 import java.util.Map;
@@ -12,9 +14,11 @@ import java.util.Map;
 public class MarketService {
 
     private MarketNativeRepository marketNativeRepository;
+    private UserNativeRepository userNativeRepository;
 
-    public MarketService(MarketNativeRepository marketNativeRepository) {
+    public MarketService(MarketNativeRepository marketNativeRepository, UserNativeRepository userNativeRepository) {
         this.marketNativeRepository = marketNativeRepository;
+        this.userNativeRepository = userNativeRepository;
     }
 
     public ResponseModel<List<MarketItemUserModel>> getAllMarketsByNativeSql() {
@@ -63,8 +67,28 @@ public class MarketService {
         result.setStatusCode(200);
         result.setDescription("query successfully");
         try {
-            String transfromData = this.marketNativeRepository.buyItemInMarket(data);
-            result.setData(transfromData);
+            // do something
+            Object userBalance = this.marketNativeRepository.getUserBalance(data);
+            Object itemPrice = this.marketNativeRepository.getItemPrice(data);
+
+            if ((int)userBalance >= (int)itemPrice) {
+                // update money user
+                int balanceLeft = (int)userBalance - (int)itemPrice;
+                UserModel userModel = new UserModel();
+                userModel.setUserBalance(balanceLeft);
+                this.userNativeRepository.updateUserByNativeSql(userModel);
+
+                //update market
+                this.marketNativeRepository.updateMarket(data);
+
+                //change inventory
+                this.marketNativeRepository.changeInventoryUser(data);
+
+                result.setData("You buy successfully");
+            }else {
+                result.setData("You can buy because money not enough");
+            }
+            return result;
 
         } catch (Exception e) {
             result.setStatusCode(500);

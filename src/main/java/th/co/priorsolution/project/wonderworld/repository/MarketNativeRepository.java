@@ -10,9 +10,14 @@ public interface MarketNativeRepository {
 
     public MarketItemUserModel getItemUserWasSelledInMarket(Map<String, Object> data);
 
-    public String buyItemInMarket(Map<String, Object> data);
-
     public void createItemMarket(Map<String, Object> data);
 
+    public Object getUserBalance(Map<String, Object> data);
+
+    public Object getItemPrice(Map<String, Object> data);
+
+    public void updateMarket(Map<String, Object> data);
+
+    public void changeInventoryUser(Map<String, Object> data);
 
 }
