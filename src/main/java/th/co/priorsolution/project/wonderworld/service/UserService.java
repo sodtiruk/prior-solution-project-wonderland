@@ -10,6 +10,7 @@ import th.co.priorsolution.project.wonderworld.repository.UserNativeRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 public class UserService {
@@ -81,13 +82,23 @@ public class UserService {
 
             if ((int)monsterWasAttackedByDamage <= 0) {
                 //remove monster
-                userNativeRepository.deleteMonsterById(data);
+                this.userNativeRepository.deleteMonsterById(data);
+
+                //add money user
+                Object money = this.userNativeRepository.getBalanceUserByNativeSql(data);
+                UserModel x = new UserModel();
+                // random money 20 to 100
+                Random random = new Random();
+                int randomInt = 20 + random.nextInt(81); // (0 to 80) + 20
+                x.setUserBalance((int)money + randomInt);
+
+                this.userNativeRepository.updateUserByNativeSql(x);
 
                 // and then add item in inventory user
                 Object userId = data.get("userId");
                 Object itemId = monsterWasAttack.getMonsterItemDropId();
 
-                userNativeRepository.addInventoryUser(userId, itemId);
+                this.userNativeRepository.addInventoryUser(userId, itemId);
             }
 
             result.setData(monsterWasAttack);

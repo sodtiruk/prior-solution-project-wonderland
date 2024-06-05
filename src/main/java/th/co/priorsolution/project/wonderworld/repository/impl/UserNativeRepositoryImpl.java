@@ -74,6 +74,14 @@ public class UserNativeRepositoryImpl implements UserNativeRepository {
     }
 
     @Override
+    public Object getBalanceUserByNativeSql(Map<String, Object> data) {
+        Object userId = data.get("userId");
+        String sqlGetDamageAttackUser = "select user_balance from users where user_id = ?";
+        Object balance = this.jdbcTemplate.queryForObject(sqlGetDamageAttackUser, new Object[]{userId}, Integer.class);
+        return balance;
+    }
+
+    @Override
     public Object getHealthMonsterByNativeSql(Map<String, Object> data){
         Object monsterId = data.get("monsterId");
         String sqlGetHealthMonster = "select monster_health_point from monsters where monster_id = ?";

@@ -22,6 +22,8 @@ public interface UserNativeRepository {
 
     public Object getHealthMonsterByNativeSql(Map<String, Object> data);
 
+    public Object getBalanceUserByNativeSql(Map<String, Object> data);
+
     public void updateHealthMonster(Object mosnterObject, Map<String, Object> data);
 
     public void deleteMonsterById(Map<String, Object> data);
