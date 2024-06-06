@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wonderlandkube-deployment
+  namespace: wonderland-dev # namespace ต้องครงกับ wonderlandkube-configmap
+  labels:
+    app: wonderlandkube-label
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wonderlandkube-deployment
+  template:
+    metadata:
+      labels:
+        app: wonderlandkube-deployment
+    spec:
+      hostAliases:
+        - ip: 127.0.0.1
+          hostnames:
+            - localhost
+      containers:
+        - name: wonderlandkube-deployment
+          image: demoapp:1.1 # name images same as build.sh
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /wonderlandkube/actuator/health
+              port: http
+            failureThreshold: 3
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /wonderlandkube/actuator/health
+              port: http
+            failureThreshold: 3
+            periodSeconds: 30
+          env:
+            - name: JAVA_OPTS
+              value: "-Xms256m -Xmx1024m"
+            - name: SPRING_CONFIG
+              value: "/home/app/config/application.yaml"
+            - name: TIME_ZONE
+              value: "-Dlogback.timezone=Asia/Bangkok"
+            - name: APP_TEXT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: wonderlandkube-secret
+                  key: app.text.secret
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: wonderlandkube-secret
+                  key: spring.datasource.username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wonderlandkube-secret
+                  key: spring.datasource.password
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: wonderlandkube-secret
+                  key: spring.datasource.url
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+            - name: wonderlandkube-volume
+              mountPath: /home/app/config/application.yaml
+              subPath: application2.yaml
+            - name: wonderlandkube-volume
+              mountPath: /home/app/config/mytestfile.txt
+              subPath: mytestfile.txt
+      volumes:
+        - name: wonderlandkube-volume
+          configMap:
+            name: wonderlandkube-configmap
