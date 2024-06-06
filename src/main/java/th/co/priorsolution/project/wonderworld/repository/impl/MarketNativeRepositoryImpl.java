@@ -133,4 +133,23 @@ public class MarketNativeRepositoryImpl implements MarketNativeRepository {
         this.jdbcTemplate.update(updateInventoryUserSql, paramForUpdateInventory.toArray());
     }
 
+    @Override
+    public void deleteItemMarket(Map<String, Object> data) {
+        Object itemMarketId = data.get("marketInvId");
+        String sql = " delete from market where market_inv_id = ? ";
+        List<Object> paramList = new ArrayList<>();
+        paramList.add(itemMarketId);
+        this.jdbcTemplate.update(sql, paramList.toArray());
+
+    }
+
+
+    @Override
+    public int getSellerId(Map<String, Object> data) {
+        Object invId= data.get("marketInvId");
+        String sql = " select inv_user_id from inventory where inv_id = ? ";
+        Object invUserId = this.jdbcTemplate.queryForObject(sql, new Object[]{invId}, Integer.class);
+        return (int)invUserId;
+    }
+
 }

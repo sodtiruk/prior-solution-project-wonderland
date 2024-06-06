@@ -20,4 +20,8 @@ public interface MarketNativeRepository {
 
     public void changeInventoryUser(Map<String, Object> data);
 
+    public void deleteItemMarket(Map<String, Object> data);
+
+    public int getSellerId(Map<String, Object> data);
+
 }
