@@ -5,17 +5,18 @@ metadata:
   namespace: wonderland-dev
 data:
   application2.yaml: |+
-    app.text=helloapptext
+    app:
+      text: helloapptext
     server:
       servlet:
-        context-path: /wonderland
+        context-path: /wonderlandkube
     spring:
       application:
         name: wonderworld
       datasource:
         username: root
         password: password
-        url: jdbc:mysql://localhost:4001/wonder_world
+        url: jdbc:mysql://host.minikube.internal:4001/wonder_world
         driver-class-name: com.mysql.cj.jdbc.Driver
   mytestfile.txt: |+
     hello my friend

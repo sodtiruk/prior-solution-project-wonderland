@@ -6,3 +6,8 @@ spring:
     password: password
     url: jdbc:mysql://localhost:4001/wonder_world
     driver-class-name: com.mysql.cj.jdbc.Driver
+app:
+  text: helloapptext
+server:
+  servlet:
+    context-path: /wonderlandkube
