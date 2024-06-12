@@ -1,7 +1,11 @@
 package th.co.priorsolution.project.wonderworld.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import th.co.priorsolution.project.wonderworld.kafka.component.KafkaCompenent;
 import th.co.priorsolution.project.wonderworld.model.MonsterModel;
 import th.co.priorsolution.project.wonderworld.model.ResponseModel;
 import th.co.priorsolution.project.wonderworld.model.UserModel;
@@ -16,9 +20,14 @@ import java.util.Random;
 public class UserService {
 
     private UserNativeRepository userNativeRepository;
+    private KafkaCompenent kafkaCompenent;
 
-    public UserService(UserNativeRepository userNativeRepository) {
+    @Value("${kafka.topics.regist}")
+    private String registTopic;
+
+    public UserService(UserNativeRepository userNativeRepository, KafkaCompenent kafkaCompenent) {
         this.userNativeRepository = userNativeRepository;
+        this.kafkaCompenent = kafkaCompenent;
     }
 
     public ResponseModel<List<UserModel>> getAllUsersByNativeSql(){
@@ -38,15 +47,26 @@ public class UserService {
         return result;
     }
 
+    //this use kafka
+    public String objectToJsonString(Object model) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(model);
+    }
+
     public ResponseModel<Integer> createUserByNativeSql(List<UserModel> userModels) {
         ResponseModel<Integer> result = new ResponseModel<>();
 
         result.setStatusCode(200);
         result.setDescription("create user successfully");
         try {
-//            List<UserModel> transfromData = userNativeRepository.findAllUsers();
-            int insertedRow = this.userNativeRepository.insertManyUser(userModels);
-            result.setData(insertedRow);
+
+//            int insertedRow = this.userNativeRepository.insertManyUser(userModels);
+
+            //kafka
+            String message = this.objectToJsonString(userModels);
+            this.kafkaCompenent.sendData(message, registTopic);
+
+//            result.setData(insertedRow);
 
         }catch (Exception e) {
             result.setStatusCode(500);
