@@ -19,7 +19,7 @@ data:
         url: jdbc:mysql://host.minikube.internal:4001/wonder_world
         driver-class-name: com.mysql.cj.jdbc.Driver
     kafka:
-      server: host.minikube.internal:29092
+      server: host.minikube.internal:49092
       topics:
         regist: regist.topic
   mytestfile.txt: |+
