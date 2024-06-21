@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    username: root
+    password: password
+    url: jdbc:mysql://db:3306/wonder_world
+    driver-class-name: com.mysql.cj.jdbc.Driver
+app:
+  text: helloapptext
+server:
+  servlet:
+    context-path: /wonderlandkube
+kafka:
+  server: kafka:9092
+  topics:
+    regist: regist.topic
