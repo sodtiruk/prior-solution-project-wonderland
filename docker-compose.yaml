@@ -1,0 +1,101 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '4001:3306'
+    volumes:
+      - ./databaseVolumn:/var/lib/mysql
+    networks:
+      - my_network
+
+  # phpmyadmin:
+  #   image: phpmyadmin
+  #   restart: always
+  #   ports:
+  #     - '5001:80'
+  #   environment:
+  #     - MYSQL_USER=user  # กำหนดชื่อผู้ใช้
+  #     - MYSQL_PASSWORD=password  # กำหนดรหัสผ่าน
+  #     - MYSQL_HOST=db # กำหนดชื่อ host ของ MySQL server ที่จะ connect
+  #     - MYSQL_ROOT_PASSWORD=root
+  #   networks:
+  #     - my_network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - '2181:2181'
+    networks:
+      - my_network
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092, PLAINTEXT_HOST://localhost:29092, PLAINTEXT_HOST_X://localhost:39092, PLAINTEXT_MINIKUBE://host.minikube.internal:49092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT, PLAINTEXT_HOST:PLAINTEXT, PLAINTEXT_HOST_X:PLAINTEXT, PLAINTEXT_MINIKUBE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true' 
+    ports:
+      - '9092:9092'
+      - '29092:29092'
+      - '39092:39092'
+      - '49092:49092'
+    networks:
+      - my_network
+
+  # backend:
+  #   image: demoapp:1.1
+  #   depends_on:
+  #     - db
+  #     - kafka
+  #   ports:
+  #     - '8080:8080'
+  #   environment:
+  #     SPRING_CONFIG: '/home/app/config/application.yaml'
+  #     JAVA_OPTS: -Xms256m -Xmx1024m
+  #   volumes:
+  #     - ./application.yaml:/home/app/config/application.yaml
+  #   networks:
+  #     - my_network
+
+  appb:
+    image:  wonderlandconsumer:1.0
+    depends_on:
+      - kafka
+    ports:
+      - '8081:8081'
+    environment:
+      SPRING_CONFIG: '/home/app/config/application.yaml'
+      JAVA_OPTS: -Xms256m -Xmx1024m
+    volumes:
+      - ./appb.yaml:/home/app/config/application.yaml
+    networks:
+      - my_network
+
+networks:
+  my_network: 
+    driver: bridge
+
+
+
+
+
+
+
+
+
+
+
